@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "tei-processing-model"
+version = "0.1.0"
+description = "A simple implementation of the TEI processing model in XSLT 3.0 with a Python based wrapper."
+authors = ["Bpolitycki <bastian.politycki@unisg.ch>"]
+license = "GPL-3.0"
+readme = "README.md"
+packages = [{include = "src"}]
+include = [{path = "src/core", format = ["sdist", "wheel"]}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+saxonche = "^12.1.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+ruff = "^0.0.260"
+mypy = "^1.1.1"
+pytest = "^7.2.2"
+lxml = "^4.9.2"
+
+[tool.ruff]
+select = ["E", "F", "I001"]
+ignore = ["E501"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
