@@ -17,6 +17,8 @@
             map {
                 'body': map {'body': 'content'},
                 'document': map {'html': 'content'},
+                'inline': map {'span': 'content'},
+                'link': map {'a': ('content', 'uri')},
                 'paragraph': map {'p': 'content'}
             }"/>
 
@@ -26,9 +28,14 @@
         <xsl:variable name="behaviour-map" as="map(xs:string, xs:string+)"
             select="map:get($pmf:behaviour, $model/@behaviour)"/>
         <xsl:variable name="name" as="xs:string" select="$behaviour-map => map:keys()"/>
+        <xsl:variable name="defined-params" as="xs:string+"
+            select="$behaviour-map => map:get($name)"/>
         <xsl:element name="{$name}">
             <xsl:attribute name="class"
                 select="(pmf:create-default-css-class($model, $name), $model/@cssClass) => string-join(' ')"/>
+            <xsl:for-each select="$model/param[not(@name = 'content')][@name = $defined-params]">
+                <xsl:apply-templates select="." mode="html-param"/>
+            </xsl:for-each>
             <xslo:apply-templates>
                 <xsl:if test="$model/param[@name = 'content'][@value]">
                     <xsl:attribute name="select" select="$model/param[@name = 'content']/@value"/>
@@ -51,5 +58,11 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+
+    <xsl:template match="param[@name = 'uri']" mode="html-param">
+        <xslo:attribute name="href">
+            <xslo:value-of select="{@value}"/>
+        </xslo:attribute>
+    </xsl:template>
 
 </xsl:stylesheet>

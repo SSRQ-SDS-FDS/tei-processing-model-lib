@@ -52,7 +52,7 @@ def tei_files(writer: SimpleTEIWriter) -> str:
             </teiHeader>
             <text>
                 <body>
-                    <p>This is a paragraph</p>
+                    <p>This is a paragraph <ref target="www.google.com">This is a link</ref></p>
                 </body>
             </text>
         </TEI>"""
@@ -91,3 +91,13 @@ def test_behaviour_paragraph(tei_pm: TeiPM, tei_files: str):
         assert int(query(xml_input=i, xpath="count(//*:p)")) == 1
         assert str(query(xml_input=i, xpath="local-name(./*:p)")) == "p"
         assert bool(query(xml_input=i, xpath="./*:p/@class => contains('tei-p')"))
+
+
+def test_behaviour_link(tei_pm: TeiPM, tei_files: str):
+    t = tei_pm.transform_tei(source=tei_files, root="//p", mp=False)
+
+    assert t is not None
+    for i in t:
+        assert int(query(xml_input=i, xpath="count(//*:a)")) == 1
+        assert str(query(xml_input=i, xpath="local-name(./*:p[1]/*:a)")) == "a"
+        assert bool(query(xml_input=i, xpath="./*:p/@href => contains('google')"))

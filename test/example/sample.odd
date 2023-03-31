@@ -35,9 +35,20 @@
                 <elementSpec ident="TEI">
                     <model behaviour="document"/>
                 </elementSpec>
+                <elementSpec ident="body">
+                    <model behaviour="body"/>
+                </elementSpec>
+                <elementSpec ident="ref">
+                    <model behaviour="link">
+                        <param name="uri" value="@target"/>
+                    </model>
+                </elementSpec>
                 <elementSpec ident="p">
                     <model behaviour="paragraph" predicate="./parent::p" output="web"/>
                     <model behaviour="paragraph" />
+                </elementSpec>
+                <elementSpec ident="hi">
+                    <model behaviour="inline" cssClass="inline-hi"/>
                 </elementSpec>
             </schemaSpec>
         </body>
