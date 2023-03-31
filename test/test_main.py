@@ -1,4 +1,5 @@
 from pathlib import Path
+from tempfile import mkdtemp
 
 import pytest
 from lxml import etree
@@ -72,6 +73,26 @@ def test_odd2xsl(tei_pm: TeiPM):
     models = query(xml_input=tei_pm.odd, xpath="count(//*:model)")
     templates = query(xml_input=tei_pm.pm, xpath="count(//*:template)")
     assert int(models) + 2 == int(templates)
+
+
+def test_mp_transformation(tei_pm: TeiPM):
+    len_files = 80
+    mp_writer = SimpleTEIWriter(Path(mkdtemp()))
+    for i in range(len_files):
+        template = f"""<TEI xmlns='http://www.tei-c.org/ns/1.0'>
+                <teiHeader>
+                </teiHeader>
+                <text>
+                    <body>
+                        <p>This is a paragraph of number {i}  <ref target="www.google.com">This is a link</ref></p>
+                    </body>
+                </text>
+            </TEI>"""
+        mp_writer.write(f"sample_mp_{i}.xml", template)
+
+    t = tei_pm.transform_tei(source=mp_writer.construct_file_pattern(), mp=True)
+    assert t is not None
+    assert len(t) == len_files
 
 
 def test_behaviour_document(tei_pm: TeiPM, tei_files: str):
